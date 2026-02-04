@@ -1,4 +1,4 @@
-Mark the specified entry or section in CLAUDE.md as pinned so it is preserved during pruning.
+Mark the specified entry or section in CLAUDE.md or auto memory files as pinned so it is preserved during pruning.
 
 ## How to pin
 

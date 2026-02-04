@@ -1,4 +1,4 @@
-Interactively review and manage memory across the project. This covers the root CLAUDE.md, subdirectory CLAUDE.md files, .claude/rules/, and subagent definitions in .claude/agents/. The same set of actions is available everywhere — no matter which file you're reviewing.
+Interactively review and manage memory across the project. This covers the root CLAUDE.md, auto memory files (~/.claude/projects/.../memory/), subdirectory CLAUDE.md files, .claude/rules/, and subagent definitions in .claude/agents/. The same set of actions is available everywhere — no matter which file you're reviewing.
 
 ## Step 0: Discover all memory files
 
@@ -10,6 +10,10 @@ Scan the project and list every memory file found, grouped by type:
 ### Root memory
 - ./CLAUDE.md (N lines)
 - ./CLAUDE.local.md (N lines)        ← if present
+
+### Auto memory
+- ~/.claude/projects/.../memory/MEMORY.md (N lines)
+- ~/.claude/projects/.../memory/other.md (N lines)   ← if any
 
 ### Subdirectory memory
 - ./src/api/CLAUDE.md (N lines)
@@ -33,6 +37,7 @@ Then ask me which scope to review:
 
 - **all** — walk through every file in the order listed above
 - **root** — only the root CLAUDE.md (and CLAUDE.local.md if present)
+- **memory** — only auto memory files (~/.claude/projects/.../memory/)
 - **subdirs** — only subdirectory CLAUDE.md files
 - **rules** — only .claude/rules/ files
 - **agents** — only .claude/agents/ subagent files
@@ -136,7 +141,7 @@ Ask me: "Apply these changes to all affected files?"
 ## Rules
 
 - Present sections in the order they appear in each file.
-- Process files in the order listed in the memory map (root → subdirs → rules → agents).
+- Process files in the order listed in the memory map (root → auto memory → subdirs → rules → agents).
 - If a section is already pinned, show that clearly in the status line.
 - Never skip a section unless I tell you to.
 - Never modify any file until I give final approval in Step 4.

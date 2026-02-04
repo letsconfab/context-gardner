@@ -1,8 +1,8 @@
-Review the CLAUDE.md file in this project and prune it to keep it focused and effective. Follow these steps:
+Review the CLAUDE.md and auto memory files (~/.claude/projects/.../memory/) in this project and prune them to keep them focused and effective. Follow these steps:
 
-## 1. Analyze the current file
+## 1. Analyze all memory files
 
-Read the full CLAUDE.md and categorize every entry into one of these buckets:
+Discover and read the project's CLAUDE.md and any auto memory files (MEMORY.md and other .md files in ~/.claude/projects/.../memory/). Categorize every entry into one of these buckets:
 
 - **Core**: Project identity, tech stack, architecture, coding standards, build/test/lint commands — things that are always relevant
 - **Active**: Current workflows, recent decisions, in-progress conventions — things that matter right now
@@ -12,9 +12,11 @@ Read the full CLAUDE.md and categorize every entry into one of these buckets:
 
 ## 2. Propose changes
 
-Present a summary in this format:
+When multiple files are in scope, group proposals by file. Present a summary in this format:
 
 ```
+## ./CLAUDE.md
+
 ### Keeping (N entries)
 - [brief description of each kept entry and why]
 
@@ -26,17 +28,27 @@ Present a summary in this format:
 
 ### Rewording (N entries)
 - [entries that are kept but sharpened for clarity]
+
+## ~/.claude/projects/.../memory/MEMORY.md
+
+### Keeping (N entries)
+- ...
+
+### Removing (N entries)
+- ...
 ```
+
+If only one file is in scope, omit the file-level headings.
 
 ## 3. Wait for confirmation
 
-Do NOT modify the file until I explicitly approve the changes. If I ask you to keep something you proposed removing, adjust accordingly.
+Do NOT modify any file until I explicitly approve the changes. If I ask you to keep something you proposed removing, adjust accordingly.
 
 ## 4. Apply changes
 
-Once approved, rewrite the CLAUDE.md with these guidelines:
+Once approved, rewrite each affected file with these guidelines:
 
-- Keep total length under 80 lines if possible (unless the project genuinely needs more)
+- Keep total length under 80 lines per file if possible (unless the project genuinely needs more)
 - Use clear markdown headings to group related instructions
 - Put the most important context (stack, commands, architecture) at the top
 - Remove any conversational tone — every line should be a direct, actionable instruction or fact

@@ -1,4 +1,4 @@
-Move a section of memory from one memory file to another. Typically used to push context down from the root CLAUDE.md into a subdirectory CLAUDE.md, a .claude/rules/ file, or a subagent in .claude/agents/.
+Move a section of memory from one memory file to another. Typically used to push context down from the root CLAUDE.md into a subdirectory CLAUDE.md, a .claude/rules/ file, a subagent in .claude/agents/, or the project's auto memory (~/.claude/projects/.../memory/).
 
 ## Step 1: Identify the source
 
@@ -15,6 +15,10 @@ If $ARGUMENTS is empty or ambiguous, scan the project for all memory files and s
 ### Root memory
 - ./CLAUDE.md (N lines)
 - ./CLAUDE.local.md (N lines)
+
+### Auto memory
+- ~/.claude/projects/.../memory/MEMORY.md (N lines)
+- ~/.claude/projects/.../memory/other.md (N lines)   ← if any
 
 ### Subdirectory memory
 - ./src/api/CLAUDE.md (N lines)
@@ -57,6 +61,7 @@ Offer these shortcuts alongside any file path:
 - **subdir <path>** — move to a CLAUDE.md in the specified subdirectory (e.g., `subdir src/api` → `src/api/CLAUDE.md`)
 - **rule <name>** — move to a rules file (e.g., `rule frontend/react` → `.claude/rules/frontend/react.md`)
 - **agent <name>** — move to a subagent file (e.g., `agent code-reviewer` → `.claude/agents/code-reviewer.md`)
+- **memory** — move to the project's auto memory file (`~/.claude/projects/.../memory/MEMORY.md`)
 - **new <path>** — create a brand new file at the specified path
 
 Or I can type any relative file path directly.

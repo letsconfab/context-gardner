@@ -2,7 +2,7 @@
 
 **Keep your Claude Code memory lean, organized, and under control.**
 
-ContextGardner is a set of slash commands for [Claude Code](https://claude.ai/code) that help you review, prune, reorganize, and protect your `CLAUDE.md` memory files — including subdirectory memory, `.claude/rules/`, and subagent definitions.
+ContextGardner is a set of slash commands for [Claude Code](https://claude.ai/code) that help you review, prune, reorganize, and protect your `CLAUDE.md` and auto memory files — including subdirectory memory, auto memory (`~/.claude/projects/.../memory/`), `.claude/rules/`, and subagent definitions.
 
 As you use Claude Code, your `CLAUDE.md` grows with project context, completed task notes, debugging breadcrumbs, and one-off instructions that quickly become stale. ContextGardner gives you the tools to tend that garden without leaving your terminal.
 
@@ -21,10 +21,10 @@ The result? A file that grows until it wastes context tokens on things that no l
 
 | Command | What it does |
 |---|---|
-| `/review-memory` | Interactive walkthrough of **all** memory files (root, subdirs, rules, agents). Step through every section and choose: keep, pin, unpin, prune, edit, merge, move, or skip. |
-| `/prune-memory` | Automated analysis that categorizes entries as core, active, stale, redundant, or vague — then proposes changes for your approval. |
-| `/move-memory` | Move a section from one memory file to another (e.g., root `CLAUDE.md` → a subagent or subdirectory). Handles destination scaffolding, placement, and source cleanup. |
-| `/pin` | Mark a section or line as pinned (`<!-- pinned -->`) so it's preserved during any pruning operation. |
+| `/review-memory` | Interactive walkthrough of **all** memory files (root, auto memory, subdirs, rules, agents). Step through every section and choose: keep, pin, unpin, prune, edit, merge, move, or skip. |
+| `/prune-memory` | Automated analysis of CLAUDE.md and auto memory files. Categorizes entries as core, active, stale, redundant, or vague — then proposes changes for your approval. |
+| `/move-memory` | Move a section from one memory file to another (e.g., root `CLAUDE.md` → a subagent, subdirectory, or auto memory). Handles destination scaffolding, placement, and source cleanup. |
+| `/pin` | Mark a section or line in CLAUDE.md or auto memory files as pinned (`<!-- pinned -->`) so it's preserved during any pruning operation. |
 
 ## Installation
 
@@ -85,7 +85,7 @@ cp commands/*.md .claude/commands/
 /review-memory
 ```
 
-This scans your project for every memory file and presents a **memory map** showing root memory, subdirectory memory, rules, and subagents with line counts. You choose a scope (`all`, `root`, `subdirs`, `rules`, `agents`, or `pick`), then walk through each section one at a time.
+This scans your project for every memory file and presents a **memory map** showing root memory, auto memory, subdirectory memory, rules, and subagents with line counts. You choose a scope (`all`, `root`, `memory`, `subdirs`, `rules`, `agents`, or `pick`), then walk through each section one at a time.
 
 For each section, you choose an action:
 
@@ -163,6 +163,7 @@ Claude Code supports a hierarchy of memory files. ContextGardner works with all 
 | `~/.claude/CLAUDE.md` | All projects | At launch |
 | `./CLAUDE.md` | Project root | At launch |
 | `./CLAUDE.local.md` | Project root (personal, gitignored) | At launch |
+| `~/.claude/projects/.../memory/` | Per-project auto memory | At launch (system prompt) |
 | `./src/api/CLAUDE.md` | Subdirectory | When Claude accesses files in that subtree |
 | `.claude/rules/*.md` | Path-scoped rules | At launch (filtered by `paths:` frontmatter) |
 | `.claude/agents/*.md` | Subagent definitions | When subagent is invoked |
