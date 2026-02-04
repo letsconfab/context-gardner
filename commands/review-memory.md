@@ -1,8 +1,14 @@
 Interactively review and manage memory across the project. This covers the root CLAUDE.md, auto memory files (~/.claude/projects/.../memory/), subdirectory CLAUDE.md files, .claude/rules/, and subagent definitions in .claude/agents/. The same set of actions is available everywhere — no matter which file you're reviewing.
 
+## Step 0a: Load state and determine filtering
+
+1. Check whether `--all` or the bare word `all` appears anywhere in `$ARGUMENTS` (but not as part of the scope keyword). If found, strip it from the arguments and set the **all-files** flag.
+2. Read `.claude/context-gardner-state.json`. If it does not exist, contains invalid JSON, or has an unknown `version`, treat this as a first run (equivalent to `--all`). Warn the user if the file was corrupt or had an unknown version.
+3. Extract `last_invoked` from the state file.
+
 ## Step 0: Discover all memory files
 
-Scan the project and list every memory file found, grouped by type:
+Scan the project and list every memory file found, grouped by type. Never include `.claude/context-gardner-state.json` itself.
 
 ```
 ## Memory Map
@@ -32,6 +38,20 @@ Scan the project and list every memory file found, grouped by type:
 
 Total: X files, Y total lines
 ```
+
+For each file in the memory map, compare its filesystem mtime (use `stat`) against `last_invoked`:
+- Annotate each file as `[changed]`, `[new]` (not in state `files` map), or `[unchanged]`.
+- Unless the **all-files** flag is set, only include `[changed]` and `[new]` files in the review scope.
+- After the memory map, show a filter summary:
+  ```
+  Showing N changed files (M unchanged hidden — use --all to include them).
+  ```
+- If zero files are changed/new and `--all` was not used, print:
+  ```
+  No memory files have changed since the last run.
+  Use --all to review all files regardless.
+  ```
+  Do NOT update `last_invoked`. Stop here.
 
 Then ask me which scope to review:
 
@@ -138,6 +158,18 @@ Ask me: "Apply these changes to all affected files?"
   - Preserve any pin markers — if a section was pinned in the source, it stays pinned in the destination.
 - After applying, show a before/after line count per file so I can see the impact.
 
+## Step 5: Update state
+
+After applying approved changes:
+
+1. Read `.claude/context-gardner-state.json` (or start with `{ "version": 1, "files": {} }` if missing).
+2. Set `last_invoked` to the current ISO 8601 UTC timestamp.
+3. For each file that was modified during this run:
+   - If the path is not in `files`, add it with `created_at` and `updated_at` both set to the current timestamp, and `updated_by` set to `"review-memory"`.
+   - If the path already exists, update `updated_at` to the current timestamp and set `updated_by` to `"review-memory"`.
+4. Remove any entries in `files` whose paths no longer exist on disk.
+5. Write the updated JSON to `.claude/context-gardner-state.json`.
+
 ## Rules
 
 - Present sections in the order they appear in each file.
@@ -148,5 +180,7 @@ Ask me: "Apply these changes to all affected files?"
 - If a file has no clear heading structure, break it into logical chunks of ~5-10 lines each and treat those as sections.
 - For subagent files, never remove or alter the YAML frontmatter (name, description, tools, model) unless I explicitly choose **edit** on the `[frontmatter]` section.
 - For rules files, never remove the `paths:` frontmatter unless I explicitly choose **edit** on the `[scope]` section.
+- When invoked directly (not via the dispatcher), handle `--all` parsing and state updates independently.
+- Never show `.claude/context-gardner-state.json` as a memory file.
 
 $ARGUMENTS

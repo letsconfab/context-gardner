@@ -21,10 +21,11 @@ The result? A file that grows until it wastes context tokens on things that no l
 
 | Command | What it does |
 |---|---|
-| `/review-memory` | Interactive walkthrough of **all** memory files (root, auto memory, subdirs, rules, agents). Step through every section and choose: keep, pin, unpin, prune, edit, merge, move, or skip. |
-| `/prune-memory` | Automated analysis of CLAUDE.md and auto memory files. Categorizes entries as core, active, stale, redundant, or vague — then proposes changes for your approval. |
-| `/move-memory` | Move a section from one memory file to another (e.g., root `CLAUDE.md` → a subagent, subdirectory, or auto memory). Handles destination scaffolding, placement, and source cleanup. |
-| `/pin` | Mark a section or line in CLAUDE.md or auto memory files as pinned (`<!-- pinned -->`) so it's preserved during any pruning operation. |
+| `/context-gardner` | **Unified entry point.** Dispatches to any subcommand below — e.g., `/context-gardner review`, `/context-gardner prune`. Supports `--all` to bypass change filtering. Also provides `help` and `version`. |
+| `/review-memory` | Interactive walkthrough of memory files that changed since the last run. Use `--all` to include unchanged files. Step through every section and choose: keep, pin, unpin, prune, edit, merge, move, or skip. |
+| `/prune-memory` | Automated analysis of changed CLAUDE.md and auto memory files. Use `--all` to include unchanged files. Categorizes entries as core, active, stale, redundant, or vague — then proposes changes for your approval. |
+| `/move-memory` | Move a section from one memory file to another. Annotates files as changed/new/unchanged but shows all files (you may need an unchanged file as a destination). Handles destination scaffolding, placement, and source cleanup. |
+| `/pin` | Mark a section or line in CLAUDE.md or auto memory files as pinned (`<!-- pinned -->`) so it's preserved during any pruning operation. Updates change tracking state. |
 
 ## Installation
 
@@ -78,6 +79,32 @@ cp commands/*.md .claude/commands/
 ```
 
 ## Usage
+
+### Unified entry point
+
+```
+/context-gardner <command> [--all] [arguments]
+```
+
+Use `/context-gardner` as a single entry point to all commands. Add `--all` to bypass change filtering and show all files. Short aliases are supported:
+
+| Full command | Short alias |
+|---|---|
+| `/context-gardner review-memory` | `/context-gardner review` |
+| `/context-gardner prune-memory` | `/context-gardner prune` |
+| `/context-gardner move-memory` | `/context-gardner move` |
+| `/context-gardner pin` | `/context-gardner pin` |
+| `/context-gardner version` | `/context-gardner -v` |
+| `/context-gardner help` | `/context-gardner` (no args) |
+
+Arguments after the subcommand are passed through, so these are equivalent:
+
+```
+/context-gardner move "API conventions" to agent api-developer
+/move-memory "API conventions" to agent api-developer
+```
+
+Individual commands (`/review-memory`, `/prune-memory`, `/move-memory`, `/pin`) continue to work as before.
 
 ### Review all memory interactively
 
@@ -134,6 +161,33 @@ Or run without arguments for an interactive walkthrough. You choose what happens
 
 Adds `<!-- pinned -->` markers so the entry survives any pruning operation.
 
+### Change tracking
+
+By default, `/review-memory` and `/prune-memory` only show memory files that have changed since the last time any ContextGardner command was run. This keeps reviews focused on what's new.
+
+```
+# Only review files that changed since last run
+/context-gardner review
+
+# Override: review all files regardless
+/context-gardner review --all
+
+# Works with individual commands too
+/prune-memory --all
+/review-memory --all
+```
+
+If nothing has changed, you'll see:
+
+```
+No memory files have changed since the last run.
+Use --all to review all files regardless.
+```
+
+On first run (no state file yet), all files are shown automatically.
+
+ContextGardner stores its state in `.claude/context-gardner-state.json`. This file is auto-created and typically gitignored. It tracks `last_invoked` (when any command last ran) and per-file metadata (`created_at`, `updated_at`, `updated_by`).
+
 ## How Pinning Works
 
 ContextGardner uses HTML comments as pin markers, which are invisible in rendered markdown but preserved in the raw file:
@@ -175,6 +229,7 @@ As your project grows, moving context from the root into subdirectory files, rul
 ```
 context-gardner/
 ├── commands/
+│   ├── context-gardner.md  # Unified dispatcher
 │   ├── review-memory.md    # Interactive memory review
 │   ├── prune-memory.md     # Automated pruning
 │   ├── move-memory.md      # Move sections between files
@@ -184,6 +239,9 @@ context-gardner/
 ├── CLAUDE.md               # Project memory for ContextGardner itself
 ├── LICENSE                  # MIT License
 └── README.md               # This file
+
+# Auto-created in user projects:
+# .claude/context-gardner-state.json  # Change tracking state (gitignored)
 ```
 
 ## Roadmap

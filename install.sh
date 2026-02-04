@@ -31,6 +31,7 @@ COMMANDS=(
     "prune-memory.md"
     "move-memory.md"
     "pin.md"
+    "context-gardner.md"
 )
 
 INSTALLED=0
@@ -58,9 +59,10 @@ echo ""
 echo "Done! $INSTALLED command(s) installed, $SKIPPED skipped."
 echo ""
 echo "Available commands:"
-echo "  /review-memory  — Interactive walkthrough of all memory files"
-echo "  /prune-memory   — Automated pruning with approval"
-echo "  /move-memory    — Move sections between memory files"
-echo "  /pin            — Pin a section to protect it from pruning"
+echo "  /context-gardner — Unified entry point (try /context-gardner help)"
+echo "  /review-memory   — Interactive walkthrough of all memory files"
+echo "  /prune-memory    — Automated pruning with approval"
+echo "  /move-memory     — Move sections between memory files"
+echo "  /pin             — Pin a section to protect it from pruning"
 echo ""
 echo "🌱 Happy gardening!"

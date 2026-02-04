@@ -25,6 +25,7 @@ COMMANDS=(
     "prune-memory.md"
     "move-memory.md"
     "pin.md"
+    "context-gardner.md"
 )
 
 REMOVED=0

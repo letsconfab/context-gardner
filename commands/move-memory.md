@@ -1,5 +1,12 @@
 Move a section of memory from one memory file to another. Typically used to push context down from the root CLAUDE.md into a subdirectory CLAUDE.md, a .claude/rules/ file, a subagent in .claude/agents/, or the project's auto memory (~/.claude/projects/.../memory/).
 
+## Step 0: Load state
+
+1. Check whether `--all` or the bare word `all` appears anywhere in `$ARGUMENTS`. If found, strip it from the arguments and set the **all-files** flag.
+2. Read `.claude/context-gardner-state.json`. If it does not exist, contains invalid JSON, or has an unknown `version`, treat this as a first run (equivalent to `--all`). Warn the user if the file was corrupt or had an unknown version.
+3. Extract `last_invoked` from the state file.
+4. When building the memory map (if needed), compare each file's filesystem mtime against `last_invoked` and annotate files as `[changed]`, `[new]`, or `[unchanged]`. Do NOT hide unchanged files — the user may want to move a section to an unchanged file. Suggest changed files first as likely sources.
+
 ## Step 1: Identify the source
 
 If $ARGUMENTS is provided, use it to locate the section and destination. Examples:
@@ -142,5 +149,7 @@ Ask: "Apply this move?"
 - If moving to a rules file, ask whether to add a `paths:` frontmatter scope. Suggest a sensible default based on the destination path.
 - Preserve any pin markers on the section being moved — if it was pinned in the source, it stays pinned in the destination.
 - If multiple sections are selected, process them as a single batch move (all go to the same destination, previewed together).
+- After applying the move, update `.claude/context-gardner-state.json`: set `last_invoked` to the current ISO 8601 UTC timestamp, and update `files` entries for both the source and destination files (`updated_at` to now, `updated_by` to `"move-memory"`, add `created_at` for new entries). Remove entries for files that no longer exist on disk.
+- Never show `.claude/context-gardner-state.json` as a memory file.
 
 $ARGUMENTS
