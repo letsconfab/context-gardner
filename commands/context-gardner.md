@@ -37,7 +37,7 @@ Check whether `--all` or the bare word `all` appears as a token anywhere in `$AR
    Usage: /context-gardner <command> [--all] [arguments]
 
    Commands:
-     review-memory (review)  Interactive walkthrough of all memory files
+     review-memory (review)  Autonomous review with proposal + approval
      prune-memory  (prune)   Automated pruning with approval
      move-memory   (move)    Move sections between memory files
      pin                     Pin entries to protect from pruning
